@@ -15,7 +15,7 @@ class Gui:
     HEIGHT: Final[int] = 720
 
     CANVAS_WIDTH: Final[int] = WIDTH*3/4
-    CANVAS_HEIGHT: Final[int] = HEIGHT*2/6
+    CANVAS_HEIGHT: Final[int] = HEIGHT*4/6
 
     ### Private attrs
     __root: Tk
@@ -60,7 +60,7 @@ class Gui:
 
     def __create_obj_list_frame(self, main_frame: Frame) -> Frame:
         obj_list_frame = LabelFrame(main_frame, text="Display File", font=('Helvetica', self.FONT_SIZE_DEFAULT),
-            width=self.WIDTH/4, height=self.HEIGHT*4/6, borderwidth=2, relief=GROOVE)
+            width=self.WIDTH/4, height=self.HEIGHT*3/6, borderwidth=2, relief=GROOVE)
         obj_list_frame.pack(padx=10, pady=10, side=TOP, anchor=W, fill=Y, expand=True)
         obj_list_frame.pack_propagate(False)
 
@@ -92,6 +92,15 @@ class Gui:
         
         return navigation_frame
     
+    def __create_output_frame(self, main_frame: Frame) -> Frame:
+        output_frame = LabelFrame(main_frame, text="Console", font=('Helvetica', self.FONT_SIZE_DEFAULT), 
+            width=self.WIDTH*3/4, height=self.HEIGHT*1/6, borderwidth=2, relief=GROOVE)
+        output_frame.pack(padx=10, pady=10, side=TOP, anchor=W)
+        output_frame.grid_propagate(False)
+        self.output = Text(output_frame, width=280, height=80, bg="white",fg="black")
+
+        return output_frame
+
     def __create_add_obj_form(self) -> None:
         form = Toplevel(self.__root)
         form.title("Adicionar Objeto")
@@ -128,6 +137,7 @@ class Gui:
         main_frame = self.__create_main_frame()
         self.__create_obj_list_frame(main_frame)
         self.__create_navigation_frame(main_frame)
+        self.__create_output_frame(main_frame)
 
     # Handlers
     def __handle_remove_obj_btn(self, list_box: Listbox) -> None:
@@ -177,8 +187,8 @@ class Gui:
         self.__root.update()
 
     def create_canvas(self):
-        canvas = Canvas(self.__root, bg="white", width=self.WIDTH*3/4, height=self.HEIGHT-40)
-        canvas.pack(padx=10, pady=10, side=RIGHT, anchor=W)
+        canvas = Canvas(self.__root, bg="white", width=self.WIDTH*3/4, height=self.HEIGHT)
+        canvas.pack(padx=10, pady=10, side=RIGHT, anchor=N)
         return canvas
     
     def update_obj_varlist(self, objects: List[Displayable]) -> None:
