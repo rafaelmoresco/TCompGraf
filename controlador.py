@@ -28,6 +28,7 @@ class Controlador:
 
     def __on_display_file_change(self, display_file: List[Objetos]) -> None:
         self.__viewport.draw(display_file)
+        self.__gui.output.insert('1.0', "Objetos alterados\n")
 
     def run(self):
         self.__criar_interface()
@@ -38,10 +39,13 @@ class Controlador:
     def criar_objeto(self, name: str, object_type: TIPO_OBJETOS, coordinates: List[Coordenada2D]):
         if (object_type == Controlador.TIPO_OBJETOS.ponto.value):
             self.display_file.append(Ponto(name, coordinates))
+            self.__gui.output.insert('1.0', "Ponto criado\n")
         elif (object_type == Controlador.TIPO_OBJETOS.linha.value):
             self.display_file.append(Linha(name, coordinates))
+            self.__gui.output.insert('1.0', "Linha criada\n")
         elif (object_type == Controlador.TIPO_OBJETOS.poligono.value):
             self.display_file.append(Poligono(name, coordinates))
+            self.__gui.output.insert('1.0', "Poligono criado\n")
 
     def zoom(self, direction: TIPO_ZOOM):
         if direction == Controlador.TIPO_ZOOM.menos.value:

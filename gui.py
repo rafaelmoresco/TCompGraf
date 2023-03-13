@@ -93,7 +93,7 @@ class Gui:
         output_frame.pack(padx=10, pady=10, side=TOP, anchor=W)
         output_frame.grid_propagate(False)
         self.output = Text(output_frame, width=280, height=80, bg="white",fg="black")
-
+        self.output.pack()
         return output_frame
 
     def __create_add_obj_form(self) -> None:
