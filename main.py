@@ -1,9 +1,8 @@
-from controller.controller import Controller
-
+from controlador import Controlador
 
 def main():
-    controller = Controller()
-    controller.run()
+    controlador = Controlador()
+    controlador.run()
 
 if __name__ == "__main__":
     main()

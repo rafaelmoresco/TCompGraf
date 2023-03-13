@@ -1,13 +1,12 @@
 from tkinter import *
 from tkinter.ttk import Notebook
 from typing import Callable, Final, List, Literal, Tuple
-from controller.controller import Controller
-from model.coordinate import Coordinate2D
-from model.displayable import Displayable
+from controlador import Controlador
+from coordenada import Coordenada2D
+from objetos import Objetos
 
 
 class Gui:
-    ### Consts
     FONT_SIZE_DEFAULT: Final[int] = 13
     FONT_SIZE_TITLE: Final[int] = 18
 
@@ -17,21 +16,18 @@ class Gui:
     CANVAS_WIDTH: Final[int] = WIDTH*3/4
     CANVAS_HEIGHT: Final[int] = HEIGHT*4/6
 
-    ### Private attrs
     __root: Tk
-    __controller: Controller
-    __obj_varlist: Variable  # holds a Dict
+    __controller: Controlador
+    __obj_varlist: Variable
 
-    # Constructor
-    def __init__(self, controller: Controller) -> None:
+    def __init__(self, controller: Controlador) -> None:
         self.__controller = controller
         self.__root = Tk()
-        self.__root.title("Sistema Básico de CG 2D")
+        self.__root.title("Sistema Gráfico Interativo")
         self.__root.resizable(width=False, height=False)
         self.__obj_varlist = Variable(value=[])
-        controller.observable_display_file.subscribe(self.update_obj_varlist)
+        controller.display_file.subscribe(self.update_obj_varlist)
 
-    ### Private methods
     def __create_label(self, parent_frame: Frame, text: str, pady: int = 0, padx: int = 0,
                        font_size: int = FONT_SIZE_DEFAULT, align=TOP, anchor=None, pack=True) -> Label:
         label = Label(parent_frame, text=text, font=('Helvetica', font_size))
@@ -51,7 +47,6 @@ class Gui:
         btn.pack(pady=pady, padx=padx, side=align, anchor=anchor)
         return btn
 
-    # GUI components
     def __create_main_frame(self) -> Frame:
         main_frame = Frame(self.__root, width=self.WIDTH/4, height=self.HEIGHT)
         main_frame.pack(fill=BOTH, expand=True)
@@ -139,11 +134,10 @@ class Gui:
         self.__create_navigation_frame(main_frame)
         self.__create_output_frame(main_frame)
 
-    # Handlers
     def __handle_remove_obj_btn(self, list_box: Listbox) -> None:
         if list_box.curselection() == (): return
         selected_idx, = list_box.curselection()
-        self.__controller.observable_display_file.remove_at(selected_idx)
+        self.__controller.display_file.remove_at(selected_idx)
 
     def __handle_add_obj_btn(self) -> None:
         self.__create_add_obj_form()
@@ -151,17 +145,15 @@ class Gui:
     def __handle_add_obj_form(self, form: Toplevel, tabs: Notebook, obj_name_input: Entry,
             tabs_coords_inputs: List[List[Tuple[Entry, Entry]]]) -> None:
         if not obj_name_input.get(): return
-        obj_coords = [Coordinate2D(float(x.get()), float(y.get()))
+        obj_coords = [Coordenada2D(float(x.get()), float(y.get()))
                       for (x, y) in tabs_coords_inputs[tabs.index(tabs.select())]]
-        # TODO: fix typing
-        self.__controller.create_object(obj_name_input.get(), tabs.index(tabs.select())+1, obj_coords)
+        self.__controller.criar_objeto(obj_name_input.get(), tabs.index(tabs.select())+1, obj_coords)
         form.destroy()
         
     def __handle_nav(self, direction: Literal['up', 'down', 'left', 'right']) -> None:
-        self.__controller.navigate(direction)
+        self.__controller.navegar(direction)
 
     def __handle_zoom(self, direction: Literal['in', 'out']) -> None:
-        # TODO: fix this
         self.__controller.zoom(1 if direction == 'in' else 2)
 
     def __add_coord_inputs(self, parent_frame: Frame, coords_inputs: List[Tuple[Entry, Entry]]) -> List[Tuple[Entry, Entry]]:
@@ -178,7 +170,6 @@ class Gui:
             input.master.destroy()
         return coords_inputs
 
-    ### Public methods
     def run(self) -> None:
         self.__create_gui()
 
@@ -191,7 +182,7 @@ class Gui:
         canvas.pack(padx=10, pady=10, side=RIGHT, anchor=N)
         return canvas
     
-    def update_obj_varlist(self, objects: List[Displayable]) -> None:
-        obj_list = [displayable.get_name() for displayable in objects]
+    def update_obj_varlist(self, objects: List[Objetos]) -> None:
+        obj_list = [displayable.get_nome() for displayable in objects]
         self.__obj_varlist.set(obj_list)
 
