@@ -2,14 +2,14 @@ from viewport import Viewport
 from display_file import DisplayFile
 from objetos import Objetos
 from ponto import Ponto
-from poligono import Poligono
+from wireframe import Wireframe
 from linha import Linha
 from typing import List, Literal
 from enum import Enum
 from coordenada import Coordenada2D
 
 class Controlador:
-    TIPO_OBJETOS = Enum('TipoObjetos', 'ponto linha poligono')
+    TIPO_OBJETOS = Enum('TipoObjetos', 'ponto linha wireframe')
     TIPO_ZOOM = Enum('TipoZoom', 'menos mais')
 
     __viewport: Viewport
@@ -43,9 +43,9 @@ class Controlador:
         elif (object_type == Controlador.TIPO_OBJETOS.linha.value):
             self.display_file.append(Linha(name, coordinates))
             self.__gui.output.insert('1.0', "Linha criada\n")
-        elif (object_type == Controlador.TIPO_OBJETOS.poligono.value):
-            self.display_file.append(Poligono(name, coordinates))
-            self.__gui.output.insert('1.0', "Poligono criado\n")
+        elif (object_type == Controlador.TIPO_OBJETOS.wireframe.value):
+            self.display_file.append(Wireframe(name, coordinates))
+            self.__gui.output.insert('1.0', "Wireframe criado\n")
 
     def zoom(self, direction: TIPO_ZOOM):
         if direction == Controlador.TIPO_ZOOM.menos.value:

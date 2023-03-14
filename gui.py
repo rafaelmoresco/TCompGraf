@@ -110,7 +110,7 @@ class Gui:
         tabs = Notebook(form_frame)
         tabs.pack(pady=10, fill=BOTH, expand=True)
         tabs_coords_inputs = []
-        for i, tab_name in enumerate(['Ponto', 'Linha', 'Polígono']):
+        for i, tab_name in enumerate(['Ponto', 'Linha', 'Wireframe']):
             tab_frame = Frame(tabs)
             tab_frame.pack(fill=BOTH, expand=True)
             self.__create_label(tab_frame, "Coordenadas:", pady=4, padx=10, anchor=NW)
@@ -119,7 +119,7 @@ class Gui:
                 coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs)
             tabs_coords_inputs.append(coords_inputs)
 
-            if tab_name == 'Polígono':
+            if tab_name == 'Wireframe':
                 self.__create_button(tab_frame, "+", self.__add_coord_inputs, tab_frame, tabs_coords_inputs[2], align=RIGHT)
                 self.__create_button(tab_frame, "–", self.__remove_last_coords_input, tabs_coords_inputs[2], align=RIGHT)
             
