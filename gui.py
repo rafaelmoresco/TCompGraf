@@ -25,6 +25,7 @@ class Gui:
         self.__root = Tk()
         self.__root.title("Sistema Gráfico Interativo")
         self.__root.resizable(width=False, height=False)
+        #TODO definir tabela 2 colunas 2 linhas
         self.__obj_varlist = Variable(value=[])
         controller.display_file.subscribe(self.update_obj_varlist)
 
@@ -49,7 +50,9 @@ class Gui:
 
     def __create_main_frame(self) -> Frame:
         main_frame = Frame(self.__root, width=self.WIDTH/4, height=self.HEIGHT)
-        main_frame.pack(fill=BOTH, expand=True)
+        main_frame.grid(row=0,column=0,rowspan=6)
+        #main_frame.pack(fill=BOTH, expand=True)
+        #TODO colocar na linha 0 coluna 0 da tabela root
         main_frame.pack_propagate(False)
         return main_frame
 
@@ -88,10 +91,12 @@ class Gui:
         return navigation_frame
     
     def __create_output_frame(self, main_frame: Frame) -> Frame:
-        output_frame = LabelFrame(main_frame, text="Console", font=('Helvetica', self.FONT_SIZE_DEFAULT), 
-            width=self.WIDTH*3/4, height=self.HEIGHT*1/6, borderwidth=2, relief=GROOVE)
-        output_frame.pack(padx=10, pady=10, side=TOP, anchor=W)
-        output_frame.grid_propagate(False)
+        #TODO colocar para root na linha 1 coluna 1
+        output_frame = LabelFrame(self.__root, text="Console", font=('Helvetica', self.FONT_SIZE_DEFAULT), 
+            width=self.WIDTH*3/4, height=self.HEIGHT*2/6, borderwidth=2, relief=GROOVE)
+        #output_frame.pack(padx=10, pady=10, side=TOP, anchor=W)
+        output_frame.grid(row=5,column=1,rowspan=6,sticky=W)
+        output_frame.pack_propagate(False)
         self.output = Text(output_frame, width=280, height=80, bg="white",fg="black")
         self.output.pack()
         return output_frame
@@ -178,8 +183,10 @@ class Gui:
         self.__root.update()
 
     def create_canvas(self):
-        canvas = Canvas(self.__root, bg="white", width=self.WIDTH*3/4, height=self.HEIGHT)
-        canvas.pack(padx=10, pady=10, side=RIGHT, anchor=N)
+        canvas = Canvas(self.__root, bg="white", width=self.WIDTH*3/4, height=self.HEIGHT*4/6)
+        #TODO colocar na linha 0 coluna 1 do root
+        canvas.grid(row=0,column=1,sticky=W,rowspan=4)
+        #canvas.pack(padx=10, pady=10, side=RIGHT, anchor=N)
         return canvas
     
     def update_obj_varlist(self, objects: List[Objetos]) -> None:
