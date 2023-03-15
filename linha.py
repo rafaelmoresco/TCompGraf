@@ -8,5 +8,5 @@ class Linha(Objetos):
         super().__init__(nome, coordenadas)
 
     def __verificador_de_limites(self):
-        if len(self.get_coordinates()) != 2:
+        if len(self.get_coordenadas()) != 2:
             raise Exception("A line must have exactly two coordinates")
