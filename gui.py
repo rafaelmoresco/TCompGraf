@@ -50,7 +50,7 @@ class Gui:
 
     def __create_main_frame(self) -> Frame:
         main_frame = Frame(self.__root, width=self.WIDTH/4, height=self.HEIGHT)
-        main_frame.grid(row=0,column=0,rowspan=6)
+        main_frame.grid(row=0,column=0,rowspan=5)
         #main_frame.pack(fill=BOTH, expand=True)
         #TODO colocar na linha 0 coluna 0 da tabela root
         main_frame.pack_propagate(False)
@@ -58,7 +58,7 @@ class Gui:
 
     def __create_obj_list_frame(self, main_frame: Frame) -> Frame:
         obj_list_frame = LabelFrame(main_frame, text="Display File", font=('Helvetica', self.FONT_SIZE_DEFAULT),
-            width=self.WIDTH/4, height=self.HEIGHT*3/6, borderwidth=2, relief=GROOVE)
+            width=self.WIDTH/4, height=self.HEIGHT*4/6, borderwidth=2, relief=GROOVE)
         obj_list_frame.pack(padx=10, pady=10, side=TOP, anchor=W, fill=Y, expand=True)
         obj_list_frame.pack_propagate(False)
 
@@ -95,10 +95,10 @@ class Gui:
         output_frame = LabelFrame(self.__root, text="Console", font=('Helvetica', self.FONT_SIZE_DEFAULT), 
             width=self.WIDTH*3/4, height=self.HEIGHT*2/6, borderwidth=2, relief=GROOVE)
         #output_frame.pack(padx=10, pady=10, side=TOP, anchor=W)
-        output_frame.grid(row=5,column=1,rowspan=6,sticky=W)
+        output_frame.grid(row=4,column=1,rowspan=5,sticky=NW,padx=10, pady=10)
         output_frame.pack_propagate(False)
-        self.output = Text(output_frame, width=280, height=80, bg="white",fg="black")
-        self.output.pack()
+        self.output = Text(output_frame, width=940, height=220, bg="white",fg="black")
+        self.output.pack(padx=4, pady=2, fill=BOTH)
         return output_frame
 
     def __create_add_obj_form(self) -> None:
@@ -185,7 +185,7 @@ class Gui:
     def create_canvas(self):
         canvas = Canvas(self.__root, bg="white", width=self.WIDTH*3/4, height=self.HEIGHT*4/6)
         #TODO colocar na linha 0 coluna 1 do root
-        canvas.grid(row=0,column=1,sticky=W,rowspan=4)
+        canvas.grid(row=0,column=1,sticky=NW,rowspan=3,padx=10, pady=10)
         #canvas.pack(padx=10, pady=10, side=RIGHT, anchor=N)
         return canvas
     
