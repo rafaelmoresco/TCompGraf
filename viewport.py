@@ -6,6 +6,7 @@ from ponto import Ponto
 from linha import Linha
 from coordenada import Coordenada2D
 
+# Classe relacionada as operações de viewport 
 class Viewport:
     __canvas: Canvas
     __window: List[Coordenada2D]

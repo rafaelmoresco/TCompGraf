@@ -1,5 +1,6 @@
 from controlador import Controlador
 
+# Main
 def main():
     controlador = Controlador()
     controlador.run()

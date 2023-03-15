@@ -25,7 +25,6 @@ class Gui:
         self.__root = Tk()
         self.__root.title("Sistema Gráfico Interativo")
         self.__root.resizable(width=False, height=False)
-        #TODO definir tabela 2 colunas 2 linhas
         self.__obj_varlist = Variable(value=[])
         controller.display_file.subscribe(self.update_obj_varlist)
 
@@ -181,9 +180,7 @@ class Gui:
 
     def create_canvas(self):
         canvas = Canvas(self.__root, bg="white", width=self.WIDTH*3/4, height=self.HEIGHT*4/6-3)
-        #TODO colocar na linha 0 coluna 1 do root
         canvas.grid(row=0,column=1,sticky=NW,rowspan=3,padx=10,pady=10)
-        #canvas.pack(padx=10, pady=10, side=RIGHT, anchor=N)
         return canvas
     
     def update_obj_varlist(self, objects: List[Objetos]) -> None:

@@ -58,3 +58,6 @@ class Controlador:
     def navegar(self, direcao: Literal['up', 'down', 'left', 'right']):
         self.__viewport.navigate(direcao)
         self.__viewport.draw(self.display_file.objetos())
+
+    def get_gui(self):
+        return self.__gui
