@@ -64,7 +64,7 @@ class Viewport:
     def draw(self, display_file: List[Objetos]):
         self.__canvas.delete('all')
         for displayable in display_file:
-            coordinates = displayable.get_coordinates()
+            coordinates = displayable.get_coordenadas()
             for i in range(len(coordinates)):
                 coord = self.__tranform_coord(coordinates[i])
                 self.__draw_point(coord)
@@ -91,12 +91,12 @@ class Viewport:
     def zoom_out(self) -> None:
         self.__zoom(Viewport.ZOOM_AMOUNT)
 
-    def navigate(self, direction: Literal['up', 'down', 'left', 'right']):
-        if direction == 'up':
+    def navigate(self, direcao: Literal['up', 'down', 'left', 'right']):
+        if direcao == 'up':
             self.__move_window(Coordenada2D(0, Viewport.NAVIGATION_SPEED))
-        elif direction == 'down':
+        elif direcao == 'down':
             self.__move_window(Coordenada2D(0, -Viewport.NAVIGATION_SPEED))
-        elif direction == 'left':
+        elif direcao == 'left':
             self.__move_window(Coordenada2D(-Viewport.NAVIGATION_SPEED, 0))
-        elif direction == 'right':
+        elif direcao == 'right':
             self.__move_window(Coordenada2D(Viewport.NAVIGATION_SPEED, 0))

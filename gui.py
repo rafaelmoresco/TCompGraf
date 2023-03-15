@@ -5,7 +5,7 @@ from controlador import Controlador
 from coordenada import Coordenada2D
 from objetos import Objetos
 
-
+# Toda a interface de usuário
 class Gui:
     FONT_SIZE_DEFAULT: Final[int] = 13
     FONT_SIZE_TITLE: Final[int] = 18
@@ -150,11 +150,11 @@ class Gui:
         self.__controller.criar_objeto(obj_name_input.get(), tabs.index(tabs.select())+1, obj_coords)
         form.destroy()
         
-    def __handle_nav(self, direction: Literal['up', 'down', 'left', 'right']) -> None:
-        self.__controller.navegar(direction)
+    def __handle_nav(self, direcao: Literal['up', 'down', 'left', 'right']) -> None:
+        self.__controller.navegar(direcao)
 
-    def __handle_zoom(self, direction: Literal['in', 'out']) -> None:
-        self.__controller.zoom(1 if direction == 'in' else 2)
+    def __handle_zoom(self, direcao: Literal['in', 'out']) -> None:
+        self.__controller.zoom(1 if direcao == 'in' else 2)
 
     def __add_coord_inputs(self, parent_frame: Frame, coords_inputs: List[Tuple[Entry, Entry]]) -> List[Tuple[Entry, Entry]]:
         inputs_frame = Frame(parent_frame)

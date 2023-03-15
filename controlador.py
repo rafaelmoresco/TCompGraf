@@ -17,6 +17,7 @@ class Controlador:
     display_file: DisplayFile
 
     def __init__(self) -> None:
+        #Cria DisplayFile
         self.display_file = DisplayFile()
 
     def __criar_interface(self) -> None:
@@ -47,13 +48,13 @@ class Controlador:
             self.display_file.append(Wireframe(name, coordinates))
             self.__gui.output.insert('1.0', "Wireframe criado\n")
 
-    def zoom(self, direction: TIPO_ZOOM):
-        if direction == Controlador.TIPO_ZOOM.menos.value:
+    def zoom(self, direcao: TIPO_ZOOM):
+        if direcao == Controlador.TIPO_ZOOM.menos.value:
             self.__viewport.zoom_in()
         else:
             self.__viewport.zoom_out()
         self.__viewport.draw(self.display_file.objetos())
 
-    def navegar(self, direction: Literal['up', 'down', 'left', 'right']):
-        self.__viewport.navigate(direction)
+    def navegar(self, direcao: Literal['up', 'down', 'left', 'right']):
+        self.__viewport.navigate(direcao)
         self.__viewport.draw(self.display_file.objetos())

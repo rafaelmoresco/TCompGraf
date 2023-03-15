@@ -7,5 +7,5 @@ class Ponto(Objetos):
         super().__init__(nome, coordenadas)
 
     def __verificador_de_limites(self):
-        if len(self.get_coordinates()) != 1:
+        if len(self.get_coordenadas()) != 1:
             raise Exception("A dot must have exactly one coordinate")

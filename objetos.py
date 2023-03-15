@@ -1,6 +1,7 @@
 from typing import List
 from coordenada import Coordenada2D
 
+#Classe abstrata de objetos a serem desenhados
 class Objetos:
     __nome: str
     __coordenadas: List[Coordenada2D]
@@ -10,13 +11,13 @@ class Objetos:
         self.__coordenadas = coordenadas
         self.__verificador_de_limites()
         if not issubclass(type(self), Objetos):
-            raise Exception("Displayable is an abstract class, it is not supposed to be instantiated")
+            raise Exception("Objetos is an abstract class, it is not supposed to be instantiated")
 
-    def add_coordinate(self, x, y):
+    def add_coordenada(self, x, y):
         self.__coordenadas.append(Coordenada2D(x, y))
         self.__verificador_de_limites()
 
-    def get_coordinates(self) -> List[Coordenada2D]:
+    def get_coordenadas(self) -> List[Coordenada2D]:
         return self.__coordenadas
     
     def get_nome(self) -> str:
