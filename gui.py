@@ -51,19 +51,17 @@ class Gui:
     def __create_main_frame(self) -> Frame:
         main_frame = Frame(self.__root, width=self.WIDTH/4, height=self.HEIGHT)
         main_frame.grid(row=0,column=0,rowspan=5)
-        #main_frame.pack(fill=BOTH, expand=True)
-        #TODO colocar na linha 0 coluna 0 da tabela root
         main_frame.pack_propagate(False)
         return main_frame
 
     def __create_obj_list_frame(self, main_frame: Frame) -> Frame:
         obj_list_frame = LabelFrame(main_frame, text="Display File", font=('Helvetica', self.FONT_SIZE_DEFAULT),
             width=self.WIDTH/4, height=self.HEIGHT*4/6, borderwidth=2, relief=GROOVE)
-        obj_list_frame.pack(padx=10, pady=10, side=TOP, anchor=W, fill=Y, expand=True)
+        obj_list_frame.pack(padx=10, pady=10, side=TOP, anchor=NW, fill=Y, expand=True)
         obj_list_frame.pack_propagate(False)
 
         list_box = Listbox(obj_list_frame, listvariable=self.__obj_varlist, selectmode=SINGLE, bg="#fff")
-        list_box.pack(pady=1, padx=4, side=TOP, anchor=W, fill=BOTH, expand=True)
+        list_box.pack(pady=1, padx=4, side=TOP, anchor=NW, fill=BOTH, expand=True)
         
         self.__create_button(obj_list_frame, "Remover Objeto", self.__handle_remove_obj_btn, list_box, padx=4, pady=2, align=LEFT)
         self.__create_button(obj_list_frame, "Adicionar Objeto", self.__handle_add_obj_btn, padx=4, pady=2, align=RIGHT)
@@ -73,15 +71,16 @@ class Gui:
     def __create_navigation_frame(self, main_frame: Frame) -> Frame:
         navigation_frame = LabelFrame(main_frame, text="Navegação", font=('Helvetica', self.FONT_SIZE_DEFAULT), 
             width=self.WIDTH/4, height=self.HEIGHT*2/6, borderwidth=2, relief=GROOVE)
-        navigation_frame.pack(padx=10, pady=10, side=TOP, anchor=W)
-        navigation_frame.grid_propagate(0)
+        navigation_frame.pack(padx=10, pady=10, side=TOP, anchor=NW)
+        navigation_frame.grid_propagate(False)
 
         for i in range(3):
             navigation_frame.rowconfigure(i, weight=1, uniform='r')
             navigation_frame.columnconfigure(i, weight=1, uniform='c')
+        navigation_frame.columnconfigure(3, weight=1, uniform='c')
         
-        Button(navigation_frame, text="Zoom Out", command=lambda: self.__handle_zoom('out')).grid(row=0, column=0)
-        Button(navigation_frame, text="Zoom In", command=lambda: self.__handle_zoom('in')).grid(row=0, column=2)
+        Button(navigation_frame, text="Zoom Out", command=lambda: self.__handle_zoom('out')).grid(row=0, column=3,padx=2)
+        Button(navigation_frame, text="Zoom In", command=lambda: self.__handle_zoom('in')).grid(row=2, column=3,padx=2)
         
         Button(navigation_frame, text="↑", command=lambda: self.__handle_nav('up')).grid(row=0, column=1)
         Button(navigation_frame, text="←", command=lambda: self.__handle_nav('left')).grid(row=1, column=0)
@@ -91,10 +90,8 @@ class Gui:
         return navigation_frame
     
     def __create_output_frame(self, main_frame: Frame) -> Frame:
-        #TODO colocar para root na linha 1 coluna 1
         output_frame = LabelFrame(self.__root, text="Console", font=('Helvetica', self.FONT_SIZE_DEFAULT), 
             width=self.WIDTH*3/4, height=self.HEIGHT*2/6, borderwidth=2, relief=GROOVE)
-        #output_frame.pack(padx=10, pady=10, side=TOP, anchor=W)
         output_frame.grid(row=4,column=1,rowspan=5,sticky=NW,padx=10, pady=10)
         output_frame.pack_propagate(False)
         self.output = Text(output_frame, width=940, height=220, bg="white",fg="black")
@@ -183,9 +180,9 @@ class Gui:
         self.__root.update()
 
     def create_canvas(self):
-        canvas = Canvas(self.__root, bg="white", width=self.WIDTH*3/4, height=self.HEIGHT*4/6)
+        canvas = Canvas(self.__root, bg="white", width=self.WIDTH*3/4, height=self.HEIGHT*4/6-3)
         #TODO colocar na linha 0 coluna 1 do root
-        canvas.grid(row=0,column=1,sticky=NW,rowspan=3,padx=10, pady=10)
+        canvas.grid(row=0,column=1,sticky=NW,rowspan=3,padx=10,pady=10)
         #canvas.pack(padx=10, pady=10, side=RIGHT, anchor=N)
         return canvas
     
