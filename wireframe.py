@@ -4,5 +4,6 @@ from objetos import Objetos
 
 # Poligono
 class Wireframe(Objetos):
-    def __init__(self, nome: str, coordenadas: List[Coordenada2D] = None) -> None:
-        super().__init__(nome, coordenadas)
+    def __constraint_check(self):
+        if len(self.__coordinates) < 3:
+            raise Exception("A wireframe have a least 3 coordinates")

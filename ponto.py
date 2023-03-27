@@ -3,5 +3,6 @@ from objetos import Objetos
 from coordenada import Coordenada2D
 
 class Ponto(Objetos):
-    def __init__(self, nome: str, coordenadas: List[Coordenada2D] = None) -> None:
-        super().__init__(nome, coordenadas)
+    def __constraint_check(self):
+        if len(self.__coordinates) != 1:
+            raise Exception("A dot must have exactly one coordinate")
