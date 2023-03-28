@@ -13,10 +13,7 @@ class Viewport:
     __world_origin: Coordenada2D
 
     LINE_WIDTH = 3
-    LINE_COLOR = "black"
-
-    POINT_WIDTH = 5
-    POINT_COLOR = "black"
+    POINT_WIDTH = 4
 
     ZOOM_AMOUNT = 0.1
 
@@ -28,13 +25,13 @@ class Viewport:
         self.__window = [Coordenada2D(0, 0), Coordenada2D(self.get_width(), self.get_height())]
         self.__world_origin = Coordenada2D(0, 0)
 
-    def __draw_line(self, coord1, coord2):
+    def __draw_line(self, coord1: Coordenada2D, coord2: Coordenada2D, cor: str):
         self.__canvas.create_line(coord1.x, coord1.y, coord2.x, coord2.y,
-                                  width=Viewport.LINE_WIDTH, fill=Viewport.LINE_COLOR)
+                                  width=Viewport.LINE_WIDTH, fill=cor)
 
-    def __draw_point(self, coord):
+    def __draw_point(self, coord: Coordenada2D, cor: str):
         self.__canvas.create_oval(coord.x, coord.y, coord.x, coord.y,
-                                  width=Viewport.POINT_WIDTH, fill=Viewport.POINT_COLOR)
+                                  width=Viewport.POINT_WIDTH, outline=cor)
 
     def __zoom(self, amount):
         window_size_x = self.__window[1].x - self.__window[0].x
@@ -68,15 +65,15 @@ class Viewport:
             coordinates = displayable.get_coordenadas()
             for i in range(len(coordinates)):
                 coord = self.__tranform_coord(coordinates[i])
-                self.__draw_point(coord)
+                self.__draw_point(coord, displayable.get_cor())
 
                 if i < len(coordinates) - 1:
                     next_coord = self.__tranform_coord(coordinates[i + 1])
-                    self.__draw_line(coord, next_coord)
+                    self.__draw_line(coord, next_coord, displayable.get_cor())
                 else:
                     if not isinstance(displayable, Ponto) and not isinstance(displayable, Linha):
                         first_coord = self.__tranform_coord(coordinates[0])
-                        self.__draw_line(coord, first_coord)
+                        self.__draw_line(coord, first_coord, displayable.get_cor())
 
         self.__canvas.update()
 
