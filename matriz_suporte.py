@@ -19,7 +19,7 @@ class MatrixHelper:
         return [sum(starmap(mul, zip(vector, col))) for col in zip(*matrix)]
 
     @staticmethod
-    # Receives a vector that represents the translation, returns a matrix to apply that operation
+    # Recebe o vetor da translação e retorna a matriz para aplicar a operação
     def translation_matrix(v: Coordenada2D) -> List[List[float]]:
         return [
             [1,   0,   0],
@@ -35,7 +35,7 @@ class MatrixHelper:
             [0,  0,   1]
         ]
 
-    # Receives the angle in degrees and creates the rotation matrix
+    # Cria matriz de rotação com o angulo recebido de parametro
     @staticmethod
     def rotation_matrix(angle: float) -> List[List[float]]:
         a = MatrixHelper.degrees_to_radians(angle)

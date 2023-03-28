@@ -6,4 +6,4 @@ from objetos import Objetos
 class Wireframe(Objetos):
     def __constraint_check(self):
         if len(self.__coordinates) < 3:
-            raise Exception("A wireframe have a least 3 coordinates")
+            raise Exception("Poligono precisa de no minimo 3 coordenadas")

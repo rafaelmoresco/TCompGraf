@@ -1,6 +1,7 @@
 from typing import List
 from matriz_suporte import MatrixHelper
 
+# Precisamos implementar a classe Coordenada2D de verdade dessa vez
 class Coordenada2D(List):
 
     def __init__(self, x, y: float):
@@ -34,14 +35,14 @@ class Coordenada2D(List):
     def __sub__(self, other):
         return self.__add__(-other)
 
-    # Transforms coordinate based on a list of transform operations, represented by matrices
+    # Transforma as coordenadas
     def transform(self, transformations_matrices: list):
         vector = self.copy()
         vector.append(float(1))
         for t in transformations_matrices:
             vector = MatrixHelper.dot(vector, t)
 
-        # Defines the new coordinates, by removing the third element in the matrix
+        # Define as novas coordenadas removendo o terceiro elemento da matriz
         self.x = vector[0]
         self.y = vector[1]
 

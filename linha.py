@@ -6,4 +6,4 @@ class Linha(Objetos):
 
     def __constraint_check(self):
         if len(self.__coordinates) != 2:
-            raise Exception("A line must have exactly two coordinates")
+            raise Exception("A linha precisa de duas coordenadas")

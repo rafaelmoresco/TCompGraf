@@ -59,16 +59,19 @@ class Controlador:
         self.__viewport.navigate(direcao)
         self.__viewport.draw(self.display_file.objetos())
 
+    # Translação entrega 2 
     def translate_object(self, objeto: Objetos, movement_vector: Coordenada2D) -> None:
         objeto.translate(movement_vector)
         self.__viewport.draw(self.display_file.objetos())
         self.__gui.output.insert('1.0', "Objeto transladado\n")
 
+    # Scale entrega 2
     def scale_object(self, objeto: Objetos, scale_vector: Coordenada2D) -> None:
         objeto.scale_around_self(scale_vector)
         self.__viewport.draw(self.display_file.objetos())
         self.__gui.output.insert('1.0', "Objeto escalado\n")
         
+    # Rotação entrega 2
     def rotate_object(self, objeto: Objetos, angle: float,
                       relative_to: Literal['world', 'itself', 'coordinate'], center: Coordenada2D = None) -> None:
         if relative_to == 'world':

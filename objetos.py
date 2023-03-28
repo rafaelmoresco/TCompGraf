@@ -38,7 +38,7 @@ class Objetos:
     def scale(self, scale_vector: Coordenada2D):
         self.transform([MatrixHelper.scale_matrix(scale_vector)])
 
-    # Transforms polygon based on a list of transform operations, represented by matrices
+    # Transforma os poligonos representado pelas matrizes
     def transform(self, transformations_matrices: list):
         for coord in self.__coordenadas:
             coord.transform(transformations_matrices)
@@ -53,27 +53,27 @@ class Objetos:
         l = float(len(self.__coordenadas))
         return Coordenada2D(sum_x/l, sum_y/l)
 
-    def rotate_around_self(self, angle: float): # angle in degrees
+    def rotate_around_self(self, angle: float):
         self.rotate_around_point(angle=angle, point=self.get_center_coord())
 
     def scale_around_self(self, scale_vector: Coordenada2D):
         center_coord = self.get_center_coord()
         self.transform([
-            # Translate to origin
-            MatrixHelper.translation_matrix(-center_coord),  # TODO: investigate translation backwards
-            # Scale
+            # Translada pra origem
+            MatrixHelper.translation_matrix(-center_coord),
+            # Escala
             MatrixHelper.scale_matrix(scale_vector),
-            # Translate back to the same position
+            # Translada de volta para a posição original
             MatrixHelper.translation_matrix(center_coord)
         ])
 
-    def rotate_around_point(self, angle: float, point: Coordenada2D): # angle in degrees
+    def rotate_around_point(self, angle: float, point: Coordenada2D):
         translation_vector = point
         self.transform([
-            # Translate to origin
+            # Translada pra origem
             MatrixHelper.translation_matrix(-translation_vector),
-            # Rotates
+            # Rotaciona
             MatrixHelper.rotation_matrix(angle),
-            # Translate back to the same position
+            # Translada de volta para a posição original
             MatrixHelper.translation_matrix(translation_vector)
         ])

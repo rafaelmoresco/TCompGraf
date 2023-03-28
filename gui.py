@@ -50,6 +50,7 @@ class Gui:
         return btn
 
     def __is_valid_color(self, color_str: str) -> bool:
+        # REGEX para ver se a cor é válida
         regex_hex_color = r'^#(?:[0-9a-fA-F]{3}){1,2}$'
         return True if re.search(regex_hex_color, color_str) else False
 
