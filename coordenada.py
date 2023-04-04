@@ -50,7 +50,7 @@ class Coordenada2D(List):
         return Coordenada2D(self.x/self.length, self.y/self.length)
 
     @staticmethod
-    def distance(coord1, coord2) -> float:
+    def distancia(coord1, coord2) -> float:
         return (coord2-coord1).length
 
     @staticmethod

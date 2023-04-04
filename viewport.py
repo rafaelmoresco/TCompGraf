@@ -13,9 +13,9 @@ class Viewport:
     LINE_WIDTH = 3
     POINT_WIDTH = 4
 
-    ZOOM_AMOUNT = 1.1
-    NAVIGATION_SPEED = 0.1
-    WINDOW_ROTATION_AMOUNT = 15
+    QNTD_ZOOM = 1.1
+    VELOCIDADE_NAVEGACAO = 0.1
+    QNTD_ROTACAO_WINDOW = 15
 
     def __init__(self, canvas: Canvas):
         self.__canvas = canvas
@@ -53,14 +53,13 @@ class Viewport:
         self.__window = new_window
 
     def draw(self, display_file: List[Objetos]):
-        # TODO: not redraw all every time
         self.__canvas.delete('all')
         drawableObject = self.__window.coord_to_window_system(display_file)
         for linha in drawableObject.linhas:
             self.__draw_line(linha[0], linha[1], cor='#000')
 
         for p in drawableObject.pontos:
-            self.__draw_point(p, cor='#000') # TODO: fix colors
+            self.__draw_point(p, cor='#000')
 
         self.__canvas.update()
 
@@ -71,13 +70,13 @@ class Viewport:
         return self.__canvas.winfo_height()
 
     def zoom_in(self) -> None:
-        self.__zoom(1/Viewport.ZOOM_AMOUNT)
+        self.__zoom(1/Viewport.QNTD_ZOOM)
 
     def zoom_out(self) -> None:
-        self.__zoom(Viewport.ZOOM_AMOUNT)
+        self.__zoom(Viewport.QNTD_ZOOM)
 
     def navigate(self, direcao: Literal['up', 'down', 'left', 'right']):
-        amount =  Viewport.NAVIGATION_SPEED
+        amount =  Viewport.VELOCIDADE_NAVEGACAO
         if direcao == 'up':
             self.__window.move_up(amount)
         elif direcao == 'down':
@@ -88,5 +87,5 @@ class Viewport:
             self.__window.move_right(amount)
 
     def rotate_window(self, direcao: Literal['left', 'right']):
-        amount = Viewport.WINDOW_ROTATION_AMOUNT if direcao == 'left' else -Viewport.WINDOW_ROTATION_AMOUNT
+        amount = Viewport.QNTD_ROTACAO_WINDOW if direcao == 'left' else -Viewport.QNTD_ROTACAO_WINDOW
         self.__window.rotate_around_point(amount, self.__window.get_window_center())

@@ -26,40 +26,24 @@ class WavefrontObject:
     vertices_idx: List[int]
 
 class WavefrontFileParser:
-    """
-    This class is responsible for importing and exporting Wavefront files.
-    To fulfill that responsibility, it is capable of translating WorldObjects into Wavefront
-    strings and vice versa.
-    For .obj files, this class is capable of interpreting the following directives:
-        - v (Geometric vertex)
-        - o (Object name)
-        - p (Point)
-        - l (Line)
-        - usemtl (Material Name)
-        - mtllib (Material Library)
-    For .mtl files, this class is capable of interpreting the following directives:
-        - newmtl (New Material)
-        - Kd (Diffuse Color)
-    """
-
     @staticmethod
     def __parse_displayables(displayables: List[Objetos]) -> Tuple[List[WavefrontObject], List[MaterialObject]]:
-        # generate unique material objects
-        materials_dict = dict.fromkeys([displayable.get_color() for displayable in displayables])
+        # gera material objects
+        materials_dict = dict.fromkeys([displayable.get_cor() for displayable in displayables])
         for hex_color in materials_dict:
             materials_dict[hex_color] = MaterialObject(
                 hex_color,
                 WavefrontFileParser.__rgb_hex_to_float(hex_color)
             )
-        # generate wavefront objects
+        # gera wavefront objects
         w_objects = []
         for displayable in displayables:
             coords = displayable.get_coordinates()
             w_objects.append(
                 WavefrontObject(
-                    name=displayable.get_name(),
+                    name=displayable.get_nome(),
                     vertices=[Coordenada3D(coord.x, coord.y, 0) for coord in coords],
-                    material=materials_dict[displayable.get_color()],
+                    material=materials_dict[displayable.get_cor()],
                     vertices_idx=[]
                 )
             )
@@ -96,7 +80,6 @@ class WavefrontFileParser:
         with open(filepath, 'w') as wavefront_file:
             wavefront_file.writelines(vertices_str)
             wavefront_file.write(f'mtllib {mtllib}\n')
-            # write window
             wavefront_file.writelines(obj_descriptions)
 
     @staticmethod

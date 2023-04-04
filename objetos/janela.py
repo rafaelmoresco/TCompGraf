@@ -40,11 +40,11 @@ class Window(WorldObject):
 
     @property
     def height(self) -> float:
-        return Coordenada2D.distance(self.top_left, self.bottom_left)
+        return Coordenada2D.distancia(self.top_left, self.bottom_left)
 
     @property
     def width(self) -> float:
-        return Coordenada2D.distance(self.top_left, self.top_right)
+        return Coordenada2D.distancia(self.top_left, self.top_right)
 
     def move_left(self, amount):
         movement_vector = -(self.top_right - self.top_left).normalize() * amount * self.width
