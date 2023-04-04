@@ -1,10 +1,12 @@
 from __future__ import annotations
 from tkinter import *
+from tkinter import filedialog
+from tkinter.messagebox import askyesno, showinfo
 from tkinter.ttk import Notebook
 from typing import Callable, Final, List, Literal, Tuple
 from controlador import Controlador
 from coordenada import Coordenada2D
-from objetos import Objetos
+from objetos.objetos import Objetos
 import re
 
 # Toda a interface de usuário
@@ -66,6 +68,12 @@ class Gui:
         obj_list_frame.pack(padx=10, pady=10, side=TOP, anchor=W, fill=Y, expand=True)
         obj_list_frame.pack_propagate(False)
 
+        import_export_frame = Frame(obj_list_frame)
+        import_export_frame.pack(side=TOP, fill=X)
+        import_export_frame.grid_propagate(0)
+        import_btn = self.__create_button(import_export_frame, "Importar", self.__handle_import_btn, pady=6, padx=4, align=LEFT)
+        export_btn = self.__create_button(import_export_frame, "Exportar", self.__handle_export_btn, pady=6, padx=4, align=RIGHT)
+
         list_box = Listbox(obj_list_frame, listvariable=self.__obj_varlist, selectmode=SINGLE, bg="#fff")
         list_box.pack(pady=1, padx=4, side=TOP, anchor=W, fill=BOTH, expand=True)
 
@@ -100,6 +108,9 @@ class Gui:
             navigation_frame.columnconfigure(i, weight=1, uniform='c')
         navigation_frame.columnconfigure(3, weight=1, uniform='c')
         
+        Button(navigation_frame, text="↶", command=lambda: self.__handle_rotate('left')).grid(row=0, column=0)
+        Button(navigation_frame, text="↷", command=lambda: self.__handle_rotate('right')).grid(row=0, column=2)
+
         Button(navigation_frame, text="Zoom Out", command=lambda: self.__handle_zoom('out')).grid(row=0, column=3,padx=2)
         Button(navigation_frame, text="Zoom In", command=lambda: self.__handle_zoom('in')).grid(row=2, column=3,padx=2)
         
@@ -245,6 +256,16 @@ class Gui:
         self.__create_navigation_frame(main_frame)
         self.__create_output_frame(main_frame)
 
+    def __handle_import_btn(self) -> None:
+        if askyesno(title="Atenção!", message="Essa ação sobrescreverá o Display File atual.\nProsseguir?"):
+            showinfo(title="Importante!", message="Certifique-se de que o arquivo de descrição de material (.mtl) está no mesmo diretório que o de objetos (.obj)")
+            filepath = filedialog.askopenfilename(title="Importar arquivo", initialdir='./', filetypes=[("Wavefront", ".obj")])
+            self.__controller.import_wavefront_file(filepath)
+
+    def __handle_export_btn(self) -> None:
+        self.__controller.export_wavefront_file()
+        showinfo(title="Exportado com sucesso!", message="Arquivo exportado com sucesso!\nDisponível em ./export/")
+    
     def __handle_remove_obj_btn(self, list_box: Listbox) -> None:
         if list_box.curselection() == (): return
         selected_idx, = list_box.curselection()
@@ -272,6 +293,9 @@ class Gui:
         selected_obj = self.__controller.display_file[selected_idx]
         self.__create_action_obj_form(selected_obj)
 
+    def __handle_rotate(self, direction: Literal['left', 'right']) -> None:
+        self.__controller.rotate_window(direction)
+        
     def __handle_nav(self, direcao: Literal['up', 'down', 'left', 'right']) -> None:
         self.__controller.navegar(direcao)
 

@@ -1,5 +1,5 @@
 from typing import Any, Callable, Dict, List
-from objetos import Objetos
+from objetos.objetos import Objetos
 
 class DisplayFile:
     __displayables: List[Objetos]
@@ -38,4 +38,9 @@ class DisplayFile:
         return self.__displayables
 
     def objetos(self) -> List[Objetos]:
+        return self.__displayables
+
+    def overwrite(self, new_list: List[Objetos]) -> List[Objetos]:
+        self.__displayables = new_list
+        self.__notify_observers()
         return self.__displayables

@@ -1,12 +1,13 @@
 from viewport import Viewport
 from display_file import DisplayFile
-from objetos import Objetos
-from ponto import Ponto
-from wireframe import Wireframe
-from linha import Linha
+from objetos.objetos import Objetos
+from objetos.ponto import Ponto
+from objetos.wireframe import Wireframe
+from objetos.linha import Linha
 from typing import List, Literal
 from enum import Enum
 from coordenada import Coordenada2D
+from wavefront_file_parser import WavefrontFileParser
 
 class Controlador:
     TIPO_OBJETOS = Enum('TipoObjetos', 'ponto linha wireframe')
@@ -85,5 +86,27 @@ class Controlador:
             self.__gui.output.insert('1.0', "Objeto rotacionado relativo as coordenadas\n")
         self.__viewport.draw(self.display_file.objetos())
     
+    def rotate_window(self, direction: Literal['left', 'right']) -> None:
+        self.__viewport.rotate_window(direction)
+        self.__viewport.draw(self.display_file.objetos())
+        if direction == 'left':
+            self.__gui.output.insert('1.0', "Mundo rotacionado para esquerda\n")
+        else:
+            self.__gui.output.insert('1.0', "Mundo rotacionado para direita\n")
+
+
+    def import_wavefront_file(self, filepath: str) -> None:
+        new_displayables, new_window = WavefrontFileParser.import_file(filepath)
+        if new_window: self.__viewport.set_window(new_window)
+        self.display_file.overwrite(new_displayables)
+        self.__gui.output.insert('1.0', "Arquivo importado com sucesso\n")
+    
+    def export_wavefront_file(self) -> None:
+        WavefrontFileParser.export_file(
+            self.display_file.objetos(),
+            self.__viewport.get_window()
+        )
+        self.__gui.output.insert('1.0', "Arquivo exportado com sucesso\n")
+
     def get_gui(self):
         return self.__gui
