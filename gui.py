@@ -15,7 +15,7 @@ class Gui:
     FONT_SIZE_TITLE: Final[int] = 18
 
     WIDTH: Final[int] = 1280
-    HEIGHT: Final[int] = 720
+    HEIGHT: Final[int] = 900
 
     CANVAS_WIDTH: Final[int] = WIDTH*3/4
     CANVAS_HEIGHT: Final[int] = HEIGHT*4/6
@@ -64,7 +64,7 @@ class Gui:
 
     def __create_obj_list_frame(self, main_frame: Frame) -> Frame:
         obj_list_frame = LabelFrame(main_frame, text="Display File", font=('Helvetica', self.FONT_SIZE_DEFAULT),
-                                    width=self.WIDTH / 4, height=self.HEIGHT * 4 / 6, borderwidth=2, relief=GROOVE)
+                                    width=self.WIDTH / 4, height=self.HEIGHT * 3 / 6, borderwidth=2, relief=GROOVE)
         obj_list_frame.pack(padx=10, pady=10, side=TOP, anchor=W, fill=Y, expand=True)
         obj_list_frame.pack_propagate(False)
 
@@ -99,8 +99,8 @@ class Gui:
 
     def __create_navigation_frame(self, main_frame: Frame) -> Frame:
         navigation_frame = LabelFrame(main_frame, text="Navegação", font=('Helvetica', self.FONT_SIZE_DEFAULT), 
-            width=self.WIDTH/4, height=self.HEIGHT*2/6, borderwidth=2, relief=GROOVE)
-        navigation_frame.pack(padx=10, pady=10, side=TOP, anchor=NW)
+            width=self.WIDTH / 4, height=self.HEIGHT * 1 / 6, borderwidth=2, relief=GROOVE)
+        navigation_frame.pack(padx=10, pady=10, side=TOP, anchor=W, fill=X, expand=True)
         navigation_frame.grid_propagate(False)
 
         for i in range(3):
@@ -120,6 +120,21 @@ class Gui:
         Button(navigation_frame, text="↓", command=lambda: self.__handle_nav('down')).grid(row=2, column=1)
         
         return navigation_frame
+    
+    def __create_clipping_frame(self, main_frame: Frame) -> Frame:
+        clipping_frame = LabelFrame(main_frame, text='Técnica de Clipping', font=('Helvetica', self.FONT_SIZE_DEFAULT),
+                                    width=self.WIDTH / 4, height=self.HEIGHT * 1 / 6, borderwidth=2, relief=GROOVE)
+        clipping_frame.pack(padx=10, pady=10, side=TOP, anchor=W, fill=X, expand=True)
+        clipping_frame.grid_propagate(0)
+
+        clipping_method = StringVar()
+        clipping_method.set('cohen_sutherland')
+        Radiobutton(clipping_frame, text='Cohen-Sutherland', variable=clipping_method, value='cohen_sutherland',
+                        command=lambda: self.__on_clipping_method_change(clipping_method.get())).pack(anchor=W, pady=6)
+        Radiobutton(clipping_frame, text='Liang-Barsky', variable=clipping_method, value='liang_barsky',
+                        command=lambda: self.__on_clipping_method_change(clipping_method.get())).pack(anchor=W, pady=6)
+
+        self.__on_clipping_method_change(clipping_method.get())
     
     def __create_output_frame(self, main_frame: Frame) -> Frame:
         output_frame = LabelFrame(self.__root, text="Console", font=('Helvetica', self.FONT_SIZE_DEFAULT), 
@@ -255,6 +270,7 @@ class Gui:
         self.__create_obj_list_frame(main_frame)
         self.__create_navigation_frame(main_frame)
         self.__create_output_frame(main_frame)
+        self.__create_clipping_frame(main_frame)
 
     def __handle_import_btn(self) -> None:
         if askyesno(title="Atenção!", message="Essa ação sobrescreverá o Display File atual.\nProsseguir?"):
@@ -323,6 +339,9 @@ class Gui:
         else:
             for button in buttons:
                 button['state'] = DISABLED
+
+    def __on_clipping_method_change(self, method: str):
+        self.__controller.set_clipping_method(method)
 
     def run(self) -> None:
         self.__create_gui()

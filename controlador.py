@@ -32,6 +32,9 @@ class Controlador:
         self.__viewport.draw(display_file_change)
         self.__gui.output.insert('1.0', "Objetos alterados\n")
 
+    def set_clipping_method(self, method: Literal['liang_barsky', 'cohen_sutherland']):
+        self.__viewport.set_clipping_method(method)
+
     def run(self):
         self.__criar_interface()
         self.__gui.run()
