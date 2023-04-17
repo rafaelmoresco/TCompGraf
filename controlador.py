@@ -4,6 +4,7 @@ from objetos.objetos import Objetos
 from objetos.ponto import Ponto
 from objetos.wireframe import Wireframe
 from objetos.linha import Linha
+from objetos.curva_bezier import CurvaBezier
 from typing import List, Literal
 from enum import Enum
 from coordenada import Coordenada2D
@@ -41,7 +42,7 @@ class Controlador:
         while True:
             self.__gui.update()
 
-    def criar_objeto(self, name: str, cor: str, object_type: Literal['dot', 'line', 'wireframe'], coordinates: List[Coordenada2D]):
+    def criar_objeto(self, name: str, cor: str, object_type: Literal['dot', 'line', 'wireframe', 'bezier'], coordinates: List[Coordenada2D]):
         if object_type == 'dot':
             self.display_file.append(Ponto(name, cor, coordinates))
             self.__gui.output.insert('1.0', "Ponto criado\n")
@@ -51,7 +52,9 @@ class Controlador:
         elif object_type == 'wireframe':
             self.display_file.append(Wireframe(name, cor, coordinates))
             self.__gui.output.insert('1.0', "Wireframe criado\n")
-
+        elif object_type == 'bezier':
+            self.display_file.append(CurvaBezier(name, cor, coordinates))
+            self.__gui.output.insert('1.0', "Curva Bezier criada\n")
     def zoom(self, direcao: TIPO_ZOOM):
         if direcao == Controlador.TIPO_ZOOM.menos.value:
             self.__viewport.zoom_in()

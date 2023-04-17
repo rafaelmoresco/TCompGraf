@@ -39,8 +39,8 @@ class Gui:
         return label
 
     def __create_input(self, parent_frame: Frame, placeholder: str = "", pady: int = 0,
-                       padx: int = 0, align=TOP, anchor=None, pack=True) -> Entry:
-        input = Entry(parent_frame, textvariable=StringVar(value=placeholder))
+                       padx: int = 0, align=TOP, anchor=None, pack=True, width: int = None) -> Entry:
+        input = Entry(parent_frame, textvariable=StringVar(value=placeholder), width=width)
         if pack:
             input.pack(ipady=3, pady=pady, padx=padx, side=align, anchor=anchor)
         return input
@@ -162,18 +162,21 @@ class Gui:
         tabs = Notebook(form_frame)
         tabs.pack(pady=10, fill=BOTH, expand=True)
         tabs_coords_inputs = []
-        for i, tab_name in enumerate(['Ponto', 'Linha', 'Polígono']):
+        for i, tab_name in enumerate(['Ponto', 'Linha', 'Polígono', 'Bezier']):
             tab_frame = Frame(tabs)
             tab_frame.pack(fill=BOTH, expand=True)
             self.__create_label(tab_frame, "Coordenadas:", pady=4, padx=10, anchor=NW)
             coords_inputs = []
             for _ in range(i + 1):
-                coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs)
+                if tab_name != 'Bezier':
+                    coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs)
+            if tab_name == 'Bezier':
+                coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 4)
             tabs_coords_inputs.append(coords_inputs)
 
             if tab_name == 'Polígono':
                 self.__create_button(tab_frame, "+", self.__add_coord_inputs, tab_frame, tabs_coords_inputs[2],
-                                     align=RIGHT)
+                                     1 if tab_name == 'Polígono' else 4, align=RIGHT)
                 self.__create_button(tab_frame, "–", self.__remove_last_coords_input, tabs_coords_inputs[2],
                                      align=RIGHT)
 
@@ -297,7 +300,7 @@ class Gui:
         selected_tab = tabs.index(tabs.select())
         obj_coords = [Coordenada2D(float(x.get()), float(y.get()))
                       for (x, y) in tabs_coords_inputs[selected_tab]]
-        obj_type = ['dot', 'line', 'wireframe']
+        obj_type = ['dot', 'line', 'wireframe', 'bezier']
         obj_type = obj_type[selected_tab]
         self.__controller.criar_objeto(obj_name_input.get(), obj_color_input.get(), obj_type, obj_coords)
         form.destroy()
@@ -318,12 +321,13 @@ class Gui:
     def __handle_zoom(self, direcao: Literal['in', 'out']) -> None:
         self.__controller.zoom(1 if direcao == 'in' else 2)
 
-    def __add_coord_inputs(self, parent_frame: Frame, coords_inputs: List[Tuple[Entry, Entry]]) -> List[Tuple[Entry, Entry]]:
+    def __add_coord_inputs(self, parent_frame: Frame, coords_inputs: List[Tuple[Entry, Entry]], n_coords: int = 1) -> List[Tuple[Entry, Entry]]:
         inputs_frame = Frame(parent_frame)
         inputs_frame.pack(pady=10, fill=X)
-        x_input = self.__create_input(inputs_frame, "x", padx=5, align=LEFT)
-        y_input = self.__create_input(inputs_frame, "y", padx=5, align=LEFT)
-        coords_inputs.append((x_input, y_input))
+        for i in range(n_coords):
+            x_input = self.__create_input(inputs_frame, "x", padx=5, align=LEFT, width=5)
+            y_input = self.__create_input(inputs_frame, "y", padx=5, align=LEFT, width=5)
+            coords_inputs.append((x_input, y_input))
         return coords_inputs
     
     def __remove_last_coords_input(self, coords_inputs: List[Tuple[Entry, Entry]]) -> List[Tuple[Entry, Entry]]:
