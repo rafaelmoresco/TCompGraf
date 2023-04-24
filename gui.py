@@ -162,22 +162,22 @@ class Gui:
         tabs = Notebook(form_frame)
         tabs.pack(pady=10, fill=BOTH, expand=True)
         tabs_coords_inputs = []
-        for i, tab_name in enumerate(['Ponto', 'Linha', 'Polígono', 'Bezier']):
+        for i, tab_name in enumerate(['Ponto', 'Linha', 'Polígono', 'Bezier', 'B Spline']):
             tab_frame = Frame(tabs)
             tab_frame.pack(fill=BOTH, expand=True)
             self.__create_label(tab_frame, "Coordenadas:", pady=4, padx=10, anchor=NW)
             coords_inputs = []
             for _ in range(i + 1):
-                if tab_name != 'Bezier':
+                if tab_name != 'Bezier' and tab_name != 'B Spline':
                     coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs)
-            if tab_name == 'Bezier':
+            if tab_name != 'Bezier' and tab_name != 'B Spline':
                 coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 4)
             tabs_coords_inputs.append(coords_inputs)
 
-            if tab_name == 'Polígono':
-                self.__create_button(tab_frame, "+", self.__add_coord_inputs, tab_frame, tabs_coords_inputs[2],
-                                     1 if tab_name == 'Polígono' else 4, align=RIGHT)
-                self.__create_button(tab_frame, "–", self.__remove_last_coords_input, tabs_coords_inputs[2],
+            if tab_name == 'Polígono' or tab_name == 'Bezier' or tab_name == 'B Spline':
+                self.__create_button(tab_frame, "+", self.__add_coord_inputs, tab_frame, tabs_coords_inputs[i],
+                                     4 if tab_name == 'Bezier' else 1, align=RIGHT)
+                self.__create_button(tab_frame, "–", self.__remove_last_coords_input, tabs_coords_inputs[i],
                                      align=RIGHT)
 
             tabs.add(tab_frame, text=tab_name)
@@ -300,7 +300,7 @@ class Gui:
         selected_tab = tabs.index(tabs.select())
         obj_coords = [Coordenada2D(float(x.get()), float(y.get()))
                       for (x, y) in tabs_coords_inputs[selected_tab]]
-        obj_type = ['dot', 'line', 'wireframe', 'bezier']
+        obj_type = ['dot', 'line', 'wireframe', 'bezier', 'spline']
         obj_type = obj_type[selected_tab]
         self.__controller.criar_objeto(obj_name_input.get(), obj_color_input.get(), obj_type, obj_coords)
         form.destroy()
@@ -324,7 +324,7 @@ class Gui:
     def __add_coord_inputs(self, parent_frame: Frame, coords_inputs: List[Tuple[Entry, Entry]], n_coords: int = 1) -> List[Tuple[Entry, Entry]]:
         inputs_frame = Frame(parent_frame)
         inputs_frame.pack(pady=10, fill=X)
-        for i in range(n_coords):
+        for _ in range(n_coords):
             x_input = self.__create_input(inputs_frame, "x", padx=5, align=LEFT, width=5)
             y_input = self.__create_input(inputs_frame, "y", padx=5, align=LEFT, width=5)
             coords_inputs.append((x_input, y_input))

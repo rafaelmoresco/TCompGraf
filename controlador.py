@@ -5,6 +5,7 @@ from objetos.ponto import Ponto
 from objetos.wireframe import Wireframe
 from objetos.linha import Linha
 from objetos.curva_bezier import CurvaBezier
+from objetos.b_spline import BSpline
 from typing import List, Literal
 from enum import Enum
 from coordenada import Coordenada2D
@@ -42,7 +43,7 @@ class Controlador:
         while True:
             self.__gui.update()
 
-    def criar_objeto(self, name: str, cor: str, object_type: Literal['dot', 'line', 'wireframe', 'bezier'], coordinates: List[Coordenada2D]):
+    def criar_objeto(self, name: str, cor: str, object_type: Literal['dot', 'line', 'wireframe', 'bezier', 'spline'], coordinates: List[Coordenada2D]):
         if object_type == 'dot':
             self.display_file.append(Ponto(name, cor, coordinates))
             self.__gui.output.insert('1.0', "Ponto criado\n")
@@ -55,6 +56,9 @@ class Controlador:
         elif object_type == 'bezier':
             self.display_file.append(CurvaBezier(name, cor, coordinates))
             self.__gui.output.insert('1.0', "Curva Bezier criada\n")
+        elif object_type == 'spline':
+            self.display_file.append(BSpline(name, cor, coordinates))
+            self.__gui.output.insert('1.0', "B-Spline criada\n")
     def zoom(self, direcao: TIPO_ZOOM):
         if direcao == Controlador.TIPO_ZOOM.menos.value:
             self.__viewport.zoom_in()
