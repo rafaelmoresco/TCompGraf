@@ -180,8 +180,7 @@ class Gui:
                 coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 4)
             else:
                 for _ in range(i + 1):
-                    coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 1)
-                    #coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 2 if tab_name == 'Wireframe' else 1)
+                    coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 2 if tab_name == 'Wireframe' else 1)
             tabs_coords_inputs.append(coords_inputs)
 
             if tab_name == 'Wireframe' or tab_name == 'Bezier' or tab_name == 'B Spline':
