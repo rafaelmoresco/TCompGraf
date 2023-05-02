@@ -3,9 +3,10 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter.messagebox import askyesno, showinfo
 from tkinter.ttk import Notebook
+from turtle import width
 from typing import Callable, Final, List, Literal, Tuple
 from controlador import Controlador
-from coordenada import Coordenada2D
+from coordenada import Coordenada3D
 from objetos.objetos import Objetos
 import re
 
@@ -99,25 +100,33 @@ class Gui:
 
     def __create_navigation_frame(self, main_frame: Frame) -> Frame:
         navigation_frame = LabelFrame(main_frame, text="Navegação", font=('Helvetica', self.FONT_SIZE_DEFAULT), 
-            width=self.WIDTH / 4, height=self.HEIGHT * 1 / 6, borderwidth=2, relief=GROOVE)
+            width=self.WIDTH / 4, height=self.HEIGHT * 1 / 5, borderwidth=2, relief=GROOVE)
         navigation_frame.pack(padx=10, pady=10, side=TOP, anchor=W, fill=X, expand=True)
         navigation_frame.grid_propagate(False)
 
-        for i in range(3):
+        for i in range(5):
             navigation_frame.rowconfigure(i, weight=1, uniform='r')
             navigation_frame.columnconfigure(i, weight=1, uniform='c')
         navigation_frame.columnconfigure(3, weight=1, uniform='c')
         
         Button(navigation_frame, text="↶", command=lambda: self.__handle_rotate('left')).grid(row=0, column=0)
-        Button(navigation_frame, text="↷", command=lambda: self.__handle_rotate('right')).grid(row=0, column=2)
+        Button(navigation_frame, text="↷", command=lambda: self.__handle_rotate('right')).grid(row=0, column=4)
 
-        Button(navigation_frame, text="Zoom Out", command=lambda: self.__handle_zoom('out')).grid(row=0, column=3,padx=2)
-        Button(navigation_frame, text="Zoom In", command=lambda: self.__handle_zoom('in')).grid(row=2, column=3,padx=2)
-        
-        Button(navigation_frame, text="↑", command=lambda: self.__handle_nav('up')).grid(row=0, column=1)
-        Button(navigation_frame, text="←", command=lambda: self.__handle_nav('left')).grid(row=1, column=0)
-        Button(navigation_frame, text="→", command=lambda: self.__handle_nav('right')).grid(row=1, column=2)
-        Button(navigation_frame, text="↓", command=lambda: self.__handle_nav('down')).grid(row=2, column=1)
+        Button(navigation_frame, text="↑", command=lambda: self.__handle_nav('up')).grid(row=0, column=2)
+        Button(navigation_frame, text="←", command=lambda: self.__handle_nav('left')).grid(row=2, column=0)
+        Button(navigation_frame, text="→", command=lambda: self.__handle_nav('right')).grid(row=2, column=4)
+        Button(navigation_frame, text="↓", command=lambda: self.__handle_nav('down')).grid(row=4, column=2)
+
+        Button(navigation_frame, text="⮝", command=lambda: self.__handle_tilt('up')).grid(row=1, column=2)
+        Button(navigation_frame, text="⮜", command=lambda: self.__handle_tilt('left')).grid(row=2, column=1)
+        Button(navigation_frame, text="⮞", command=lambda: self.__handle_tilt('right')).grid(row=2, column=3)
+        Button(navigation_frame, text="⮟", command=lambda: self.__handle_tilt('down')).grid(row=3, column=2)
+
+        Button(navigation_frame, text="↥", command=lambda: self.__handle_move('forward')).grid(row=4, column=4)
+        Button(navigation_frame, text="↧", command=lambda: self.__handle_move('backward')).grid(row=4, column=3)
+
+        Button(navigation_frame, text="+", command=lambda: self.__handle_zoom('in')).grid(row=4, column=1)
+        Button(navigation_frame, text="–", command=lambda: self.__handle_zoom('out')).grid(row=4, column=0)
         
         return navigation_frame
     
@@ -162,23 +171,23 @@ class Gui:
         tabs = Notebook(form_frame)
         tabs.pack(pady=10, fill=BOTH, expand=True)
         tabs_coords_inputs = []
-        for i, tab_name in enumerate(['Ponto', 'Linha', 'Polígono', 'Bezier', 'B Spline']):
+        for i, tab_name in enumerate(['Ponto', 'Linha', 'Wireframe', 'Bezier', 'B Spline']):
             tab_frame = Frame(tabs)
             tab_frame.pack(fill=BOTH, expand=True)
             self.__create_label(tab_frame, "Coordenadas:", pady=4, padx=10, anchor=NW)
             coords_inputs = []
-            for _ in range(i + 1):
-                if tab_name != 'Bezier' and tab_name != 'B Spline':
-                    coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs)
             if tab_name != 'Bezier' and tab_name != 'B Spline':
                 coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 4)
+            else:
+                for _ in range(i + 1):
+                    coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 2 if tab_name == 'Wireframe' else 1)
             tabs_coords_inputs.append(coords_inputs)
 
-            if tab_name == 'Polígono' or tab_name == 'Bezier' or tab_name == 'B Spline':
+            if tab_name == 'Wireframe' or tab_name == 'Bezier' or tab_name == 'B Spline':
                 self.__create_button(tab_frame, "+", self.__add_coord_inputs, tab_frame, tabs_coords_inputs[i],
-                                     4 if tab_name == 'Bezier' else 1, align=RIGHT)
+                                     4 if tab_name == 'Bezier' else 2 if tab_name == 'Wireframe' else 1, align=RIGHT)
                 self.__create_button(tab_frame, "–", self.__remove_last_coords_input, tabs_coords_inputs[i],
-                                     align=RIGHT)
+                                    4 if tab_name == 'Bezier' else 2 if tab_name == 'Wireframe' else 1, align=RIGHT)
 
             tabs.add(tab_frame, text=tab_name)
 
@@ -188,7 +197,7 @@ class Gui:
     def __create_action_obj_form(self, obj: Objetos) -> None:
         form = Toplevel(self.__root)
         form.title("Ações")
-        form_frame = Frame(form, width=500, height=400)
+        form_frame = Frame(form, width=500, height=600)
         form_frame.pack(fill=BOTH, expand=True)
         form_frame.pack_propagate(False)
         self.__create_label(form_frame, f'Objeto selecionado: {obj.get_nome()}', pady=25, padx=25, anchor=NW)
@@ -204,14 +213,15 @@ class Gui:
         frame.pack(fill=BOTH, expand=True)
         self.__create_label(frame, "Vetor de Movimento")
         coords_frame = Frame(frame)
-        x_input = self.__create_input(coords_frame, "x", padx=40, align=LEFT)
-        y_input = self.__create_input(coords_frame, "y", padx=40, align=RIGHT)
+        x_input = self.__create_input(coords_frame, "x", padx=40, width=8)
+        y_input = self.__create_input(coords_frame, "y", padx=40, width=8)
+        z_input = self.__create_input(coords_frame, "z", padx=40, width=8)
         coords_frame.pack(pady=10, fill=X)
-        def handle_apply_btn(objeto: Objetos, x_inp: Entry, y_inp: Entry) -> None:
-            movement_vector = Coordenada2D(float(x_inp.get()), float(y_inp.get()))
+        def handle_apply_btn(objeto: Objetos, x_inp: Entry, y_inp: Entry, z_inp: Entry) -> None:
+            movement_vector = Coordenada3D(float(x_inp.get()), float(y_inp.get()), float(z_inp.get()))
             self.__controller.translate_object(objeto, movement_vector)
 
-        self.__create_button(frame, 'Aplicar', handle_apply_btn, obj, x_input, y_input, align=BOTTOM)
+        self.__create_button(frame, 'Aplicar', handle_apply_btn, obj, x_input, y_input, z_input, align=BOTTOM)
         return frame
 
     def __create_scale_frame(self, tabs: Notebook, obj: Objetos) -> Frame:
@@ -219,53 +229,97 @@ class Gui:
         frame.pack(fill=BOTH, expand=True)
         self.__create_label(frame, "Vetor de Escala")
         coords_frame = Frame(frame)
-        x_input = self.__create_input(coords_frame, "x", padx=40, align=LEFT)
-        y_input = self.__create_input(coords_frame, "y", padx=40, align=RIGHT)
+        x_input = self.__create_input(coords_frame, "x", padx=40, width=8)
+        y_input = self.__create_input(coords_frame, "y", padx=40, width=8)
+        z_input = self.__create_input(coords_frame, "z", padx=40, width=8)
         coords_frame.pack(pady=10, fill=X)
-        def handle_apply_btn(objeto: Objetos, x_inp: Entry, y_inp: Entry) -> None:
-            scale_vector = Coordenada2D(float(x_inp.get()), float(y_inp.get()))
+        def handle_apply_btn(objeto: Objetos, x_inp: Entry, y_inp: Entry, z_inp: Entry) -> None:
+            scale_vector = Coordenada3D(float(x_inp.get()), float(y_inp.get()), float(z_inp.get()))
             self.__controller.scale_object(objeto, scale_vector)
 
-        self.__create_button(frame, 'Aplicar', handle_apply_btn, obj, x_input, y_input, align=BOTTOM)
+        self.__create_button(frame, 'Aplicar', handle_apply_btn, obj, x_input, y_input, z_input, align=BOTTOM)
         return frame
 
     def __create_rotate_frame(self, tabs: Notebook, obj: Objetos) -> Frame:
         frame = Frame(tabs)
         frame.pack(fill=BOTH, expand=True)
 
-        coords_frame = Frame(frame)
-        x_input = self.__create_input(coords_frame, "x", padx=40, align=LEFT)
-        y_input = self.__create_input(coords_frame, "y", padx=40, align=RIGHT)
-        coords_inputs = [x_input, y_input]
+        relative_to_frame = Frame(frame)
+        relative_to_frame.pack(pady=20)
+        coords_frame = Frame(relative_to_frame)
+        x_input = self.__create_input(coords_frame, "x", padx=40, align=LEFT, width=8)
+        y_input = self.__create_input(coords_frame, "y", padx=40, align=LEFT, width=8)
+        z_input = self.__create_input(coords_frame, 'z', padx=40, align=LEFT, width=8)
+        coords_inputs = [x_input, y_input, z_input]
         [inp.config(state=DISABLED) for inp in coords_inputs]
 
         relative_to = StringVar()
         relative_to.set('world')
-        Radiobutton(frame, text="Em torno do centro do mundo", variable=relative_to, value='world',
+        Radiobutton(relative_to_frame, text="Em torno do centro do mundo", variable=relative_to, value='world',
                     command=lambda: [inp.config(state=DISABLED) for inp in coords_inputs]) \
             .pack(anchor=W, pady=8)
-        Radiobutton(frame, text="Em torno do centro do objeto", variable=relative_to, value='itself',
+        Radiobutton(relative_to_frame, text="Em torno do centro do objeto", variable=relative_to, value='itself',
                     command=lambda: [inp.config(state=DISABLED) for inp in coords_inputs]) \
             .pack(anchor=W, pady=8)
-        Radiobutton(frame, text="Em torno de uma coordenada", variable=relative_to, value='coordinate',
+        Radiobutton(relative_to_frame, text="Em torno de uma coordenada", variable=relative_to, value='coordinate',
                     command=lambda: [inp.config(state=NORMAL) for inp in coords_inputs]) \
-            .pack(anchor=W, pady=8)
+.pack(anchor=W, pady=4)
+        coords_frame.pack(pady=4)
 
-        coords_frame.pack(pady=10, fill=X)
-        self.__create_label(frame, "Ângulo")
-        angle_input = self.__create_input(frame)
+        axis_frame = Frame(frame)
+        axis_frame.pack(pady=20)
+        self.__create_label(axis_frame, "Em relação ao eixo")
+        axis_coords_frame = Frame(axis_frame)
+        a_x_input = self.__create_input(axis_coords_frame, "x", padx=40, align=LEFT, width=8)
+        a_y_input = self.__create_input(axis_coords_frame, "y", padx=40, align=LEFT, width=8)
+        a_z_input = self.__create_input(axis_coords_frame, 'z', padx=40, align=LEFT, width=8)
+        axis_coords_inputs = [a_x_input, a_y_input, a_z_input]
+        [inp.config(state=DISABLED) for inp in axis_coords_inputs]
+        axis = StringVar()
+        axis.set('z')
+        radio_frame = Frame(axis_frame)
+        Radiobutton(radio_frame, text="x", variable=axis, value='x',
+                    command=lambda: [inp.config(state=DISABLED) for inp in axis_coords_inputs]) \
+            .pack(side=LEFT, padx=4)
+        Radiobutton(radio_frame, text="y", variable=axis, value='y',
+                    command=lambda: [inp.config(state=DISABLED) for inp in axis_coords_inputs]) \
+            .pack(side=LEFT, padx=4)
+        Radiobutton(radio_frame, text="z", variable=axis, value='z',
+                    command=lambda: [inp.config(state=DISABLED) for inp in axis_coords_inputs]) \
+            .pack(side=LEFT, padx=4)
+        Radiobutton(radio_frame, text="Arbitrário", variable=axis, value='arbitrary',
+                command=lambda: [inp.config(state=NORMAL) for inp in axis_coords_inputs]) \
+            .pack(side=LEFT, padx=4)
+        radio_frame.pack()
+        axis_coords_frame.pack(pady=4)
+
+        angle_frame = Frame(frame)
+        angle_frame.pack(pady=20)
+        self.__create_label(angle_frame, "Ângulo")
+        angle_input = self.__create_input(angle_frame)
 
         def handle_apply_btn(objeto: Objetos, var_rel_to: StringVar, angle_inp: Entry,
-                             x_inp: Entry, y_inp: Entry) -> None:
+                             x_inp: Entry, y_inp: Entry, z_inp: Entry, var_axis: StringVar,
+                             a_x_inp: Entry, a_y_inp: Entry, a_z_inp: Entry) -> None:
             local_relative_to = var_rel_to.get()
+            local_axis = var_axis.get()
             angle = float(angle_inp.get())
             center = None
+            arbitrary_axis = None
             if local_relative_to == 'coordinate':
-                center = Coordenada2D(float(x_inp.get()), float(y_inp.get()))
-            self.__controller.rotate_object(objeto, angle, local_relative_to, center)
+                center = Coordenada3D(float(x_inp.get()), float(y_inp.get()), float(z_inp.get()))
+            if local_axis == 'arbitrary':
+                arbitrary_axis = Coordenada3D(float(a_x_inp.get()), float(a_y_inp.get()), float(a_z_inp.get()))
+                local_axis=None
+            self.__controller.rotate_object(displayable=objeto,
+                                            angle=angle,
+                                            relative_to=local_relative_to,
+                                            axis=local_axis,
+                                            center=center,
+                                            arbitrary_axis_coord=arbitrary_axis)
 
         self.__create_button(frame, 'Aplicar', handle_apply_btn, obj, relative_to, angle_input,
-                             x_input, y_input, align=BOTTOM)
+                            x_input, y_input, z_input, axis, a_x_input, a_y_input, a_z_input, align=BOTTOM)
         return frame
 
     def __create_gui(self) -> None:
@@ -294,12 +348,12 @@ class Gui:
         self.__create_add_obj_form()
 
     def __handle_add_obj_form(self, form: Toplevel, tabs: Notebook, obj_name_input: Entry, obj_color_input: Entry,
-                              tabs_coords_inputs: List[List[Tuple[Entry, Entry]]]) -> None:
+                              tabs_coords_inputs: List[List[Tuple[Entry, Entry, Entry]]]) -> None:
         if not obj_name_input.get(): return
         if not self.__is_valid_color(obj_color_input.get()): return
         selected_tab = tabs.index(tabs.select())
-        obj_coords = [Coordenada2D(float(x.get()), float(y.get()))
-                      for (x, y) in tabs_coords_inputs[selected_tab]]
+        obj_coords = [Coordenada3D(float(x.get()), float(y.get()), float(z.get()))
+                      for (x, y, z) in tabs_coords_inputs[selected_tab]]
         obj_type = ['dot', 'line', 'wireframe', 'bezier', 'spline']
         obj_type = obj_type[selected_tab]
         self.__controller.criar_objeto(obj_name_input.get(), obj_color_input.get(), obj_type, obj_coords)
@@ -318,22 +372,31 @@ class Gui:
     def __handle_nav(self, direcao: Literal['up', 'down', 'left', 'right']) -> None:
         self.__controller.navegar(direcao)
 
+    def __handle_tilt(self, direction: Literal['up', 'down', 'left', 'right']) -> None:
+        self.__controller.tilt(direction)
+
+    def __handle_move(self, direction: Literal['forward', 'backward']) -> None:
+        self.__controller.move(direction)
+
     def __handle_zoom(self, direcao: Literal['in', 'out']) -> None:
         self.__controller.zoom(1 if direcao == 'in' else 2)
 
-    def __add_coord_inputs(self, parent_frame: Frame, coords_inputs: List[Tuple[Entry, Entry]], n_coords: int = 1) -> List[Tuple[Entry, Entry]]:
+    def __add_coord_inputs(self, parent_frame: Frame, coords_inputs: List[Tuple[Entry, Entry, Entry]], n_coords: int = 1) -> List[Tuple[Entry, Entry, Entry]]:
         inputs_frame = Frame(parent_frame)
         inputs_frame.pack(pady=10, fill=X)
         for _ in range(n_coords):
             x_input = self.__create_input(inputs_frame, "x", padx=5, align=LEFT, width=5)
             y_input = self.__create_input(inputs_frame, "y", padx=5, align=LEFT, width=5)
-            coords_inputs.append((x_input, y_input))
+            z_input = self.__create_input(inputs_frame, "z", padx=5, align=LEFT, width=5)
+            coords_inputs.append((x_input, y_input, z_input))
         return coords_inputs
     
-    def __remove_last_coords_input(self, coords_inputs: List[Tuple[Entry, Entry]]) -> List[Tuple[Entry, Entry]]:
-        if len(coords_inputs) <= 3: return coords_inputs
-        for input in coords_inputs.pop():
-            input.master.destroy()
+    def __remove_last_coords_input(self, coords_inputs: List[Tuple[Entry, Entry, Entry]], n_coords: int = 1) -> List[Tuple[Entry, Entry]]:
+        if len(coords_inputs) <= n_coords: return coords_inputs
+        for _ in range(n_coords):
+            for input in coords_inputs.pop():
+                input.forget()
+                input.master.destroy()
         return coords_inputs
 
     def __on_obj_list_select(self, event: Event[Listbox], buttons: List[Button]) -> None:

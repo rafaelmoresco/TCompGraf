@@ -9,6 +9,7 @@ from objetos.b_spline import BSpline
 from typing import List, Literal
 from enum import Enum
 from coordenada import Coordenada2D
+from coordenada import Coordenada3D
 from wavefront_file_parser import WavefrontFileParser
 
 class Controlador:
@@ -43,7 +44,7 @@ class Controlador:
         while True:
             self.__gui.update()
 
-    def criar_objeto(self, name: str, cor: str, object_type: Literal['dot', 'line', 'wireframe', 'bezier', 'spline'], coordinates: List[Coordenada2D]):
+    def create_object(self, name: str, cor: str, object_type: Literal['dot', 'line', 'wireframe', 'bezier', 'spline'], coordinates: List[Coordenada3D]):
         if object_type == 'dot':
             self.display_file.append(Ponto(name, cor, coordinates))
             self.__gui.output.insert('1.0', "Ponto criado\n")
@@ -70,29 +71,41 @@ class Controlador:
         self.__viewport.navigate(direcao)
         self.__viewport.draw(self.display_file.objetos())
 
+
+    def tilt(self, direction: Literal['up', 'down', 'left', 'right']) -> None:
+        self.__viewport.tilt(direction)
+        self.__viewport.draw(self.display_file.objetos())
+
+    def move(self, direction: Literal['forward', 'backward']) -> None:
+        self.__viewport.navigate(direction)
+        self.__viewport.draw(self.display_file.objetos())
+
     # Translação entrega 2 
-    def translate_object(self, objeto: Objetos, movement_vector: Coordenada2D) -> None:
+    def translate_object(self, objeto: Objetos, movement_vector: Coordenada3D) -> None:
         objeto.translate(movement_vector)
         self.__viewport.draw(self.display_file.objetos())
         self.__gui.output.insert('1.0', "Objeto transladado\n")
 
     # Scale entrega 2
-    def scale_object(self, objeto: Objetos, scale_vector: Coordenada2D) -> None:
+    def scale_object(self, objeto: Objetos, scale_vector: Coordenada3D) -> None:
+        scale_vector = Coordenada3D(list(scale_vector) +[0])
         objeto.scale_around_self(scale_vector)
         self.__viewport.draw(self.display_file.objetos())
         self.__gui.output.insert('1.0', "Objeto escalado\n")
         
     # Rotação entrega 2
     def rotate_object(self, objeto: Objetos, angle: float,
-                      relative_to: Literal['world', 'itself', 'coordinate'], center: Coordenada2D = None) -> None:
+                      relative_to: Literal['world', 'itself', 'coordinate'], 
+                      axis: Literal['x', 'y', 'z'], center: Coordenada3D = None,
+                      arbitrary_axis_coord: Coordenada3D = None) -> None:
         if relative_to == 'world':
-            objeto.rotate(angle)
+            objeto.rotate(angle=angle, axis=axis, axis_vector=arbitrary_axis_coord)
             self.__gui.output.insert('1.0', "Objeto rotacionado relativo ao mundo\n")
         elif relative_to == 'itself':
-            objeto.rotate_around_self(angle)
+            objeto.rotate_around_self(angle=angle, axis=axis, axis_vector=arbitrary_axis_coord)
             self.__gui.output.insert('1.0', "Objeto rotacionado relativo a si mesmo\n")
         elif relative_to == 'coordinate':
-            objeto.rotate_around_point(angle, center)
+            objeto.rotate_around_point(angle=angle, point=center, axis=axis, axis_vector=arbitrary_axis_coord)
             self.__gui.output.insert('1.0', "Objeto rotacionado relativo as coordenadas\n")
         self.__viewport.draw(self.display_file.objetos())
     
@@ -103,7 +116,6 @@ class Controlador:
             self.__gui.output.insert('1.0', "Mundo rotacionado para esquerda\n")
         else:
             self.__gui.output.insert('1.0', "Mundo rotacionado para direita\n")
-
 
     def import_wavefront_file(self, filepath: str) -> None:
         new_displayables, new_window = WavefrontFileParser.import_file(filepath)

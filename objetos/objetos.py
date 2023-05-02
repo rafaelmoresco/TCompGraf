@@ -1,5 +1,5 @@
 from typing import List
-from coordenada import Coordenada2D
+from coordenada import Coordenada
 from dataclasses import dataclass
 from objetos.objetos_mundo import WorldObject
 from abc import abstractmethod
@@ -11,11 +11,11 @@ class Objetos(WorldObject):
 
     @dataclass
     class Drawable:
-        linhas: List[List[Coordenada2D]]
-        pontos: List[Coordenada2D]
+        linhas: List[List[Coordenada]]
+        pontos: List[Coordenada]
         cor: str
 
-    def __init__(self, nome: str, cor: str,  coordenadas: List[Coordenada2D] = None) -> None:
+    def __init__(self, nome: str, cor: str,  coordenadas: List[Coordenada] = None) -> None:
         super().__init__(coordinates=coordenadas)
         self._nome = nome
         self._cor = cor

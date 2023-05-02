@@ -1,6 +1,6 @@
 from objetos.curva import Curva
 from matriz_suporte import MatrixHelper
-from coordenada import Coordenada2D
+from coordenada import Coordenada3D
 
 
 class CurvaBezier(Curva):
@@ -48,6 +48,6 @@ class CurvaBezier(Curva):
                 x = MatrixHelper.mul(MatrixHelper.mul(T, Mb), Gx)[0][0]
                 y = MatrixHelper.mul(MatrixHelper.mul(T, Mb), Gy)[0][0]
 
-                points.append(Coordenada2D(x, y))
+                points.append(Coordenada3D(x, y))
 
         return [[points[i], points[i+1]] for i in range(len(points)-1)]

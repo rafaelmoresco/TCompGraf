@@ -2,7 +2,7 @@ from tkinter import *
 from typing import List, Literal
 from objetos.objetos import Objetos
 from objetos.janela import Window
-from coordenada import Coordenada2D
+from coordenada import Coordenada2D, Coordenada3D
 
 # Classe relacionada as operações de viewport 
 class Viewport:
@@ -17,14 +17,15 @@ class Viewport:
     QNTD_ZOOM = 1.1
     VELOCIDADE_NAVEGACAO = 0.07
     QNTD_ROTACAO_WINDOW = 15
+    QNTD_MOVIMENTO_WINDOW = 30
 
     def __init__(self, canvas: Canvas):
         self.__canvas = canvas
         self.__canvas.update()
         self.__window = Window(
-            top_left=Coordenada2D(0, self.get_height()),
-            top_right=Coordenada2D(self.get_width(), self.get_height()),
-            bottom_left=Coordenada2D(0, 0)
+            top_left=Coordenada3D(0, self.get_height(), -30),
+            top_right=Coordenada3D(self.get_width(), self.get_height(), -30),
+            bottom_left=Coordenada3D(0, 0, -30)
         )
         self.__world_origin = Coordenada2D(0, 0)
         self.__draw_viewport()
@@ -52,7 +53,7 @@ class Viewport:
                                   width=Viewport.POINT_WIDTH, outline=cor)
 
     def __zoom(self, amount):
-        self.__window.scale_around_self(Coordenada2D(amount, amount))
+        self.__window.scale_around_self(Coordenada3D(amount, amount, amount))
 
     def __tranform_coord(self, coord: Coordenada2D) -> Coordenada2D:
         x = (coord[0] + 1)*0.5*self.get_width()
@@ -77,9 +78,10 @@ class Viewport:
             drawable = self.__window.coord_to_window_system(displayable.get_drawable())
             drawable = self.__window.clip(drawable)
             for point in drawable.pontos:
-                self.__draw_point(point, drawable.cor)
+                self.__draw_point(Coordenada2D(point), drawable.cor)
             for line in drawable.linhas:
-                self.__draw_line(line[0], line[1], drawable.cor)
+                if line:
+                    self.__draw_line(Coordenada2D(line[0]), Coordenada2D(line[1]), drawable.cor)
 
         self.__canvas.update()
 
@@ -95,7 +97,7 @@ class Viewport:
     def zoom_out(self) -> None:
         self.__zoom(Viewport.QNTD_ZOOM)
 
-    def navigate(self, direcao: Literal['up', 'down', 'left', 'right']):
+    def navigate(self, direcao: Literal['up', 'down', 'left', 'right', 'forward', 'backward']):
         amount =  Viewport.VELOCIDADE_NAVEGACAO
         if direcao == 'up':
             self.__window.move_up(amount)
@@ -105,7 +107,20 @@ class Viewport:
             self.__window.move_left(amount)
         elif direcao == 'right':
             self.__window.move_right(amount)
+        elif direcao == 'forward':
+            self.__window.move_forward(Viewport.QNTD_MOVIMENTO_WINDOW)
+        elif direcao == 'backward':
+            self.__window.move_forward(-Viewport.QNTD_MOVIMENTO_WINDOW)
+
+    def tilt(self, direction: Literal['up', 'down', 'left', 'right']) -> None:
+        axis_vector: Coordenada3D = self.__window.up
+        if direction == 'up' or direction == 'down':
+            axis_vector = self.__window.right
+        amount = Viewport.QNTD_ROTACAO_WINDOW
+        if direction == 'down' or direction == 'left':
+            amount = -amount
+        self.__window.rotate_around_self(amount, axis_vector=axis_vector)
 
     def rotate_window(self, direcao: Literal['left', 'right']):
-        amount = Viewport.QNTD_ROTACAO_WINDOW if direcao == 'left' else -Viewport.QNTD_ROTACAO_WINDOW
-        self.__window.rotate_around_point(amount, self.__window.get_window_center())
+        amount = -Viewport.QNTD_ROTACAO_WINDOW if direcao == 'left' else Viewport.QNTD_ROTACAO_WINDOW
+        self.__window.rotate_around_point(angle=amount, point=self.__window.get_window_center(), axis_vector=self.__window.view_vector)
