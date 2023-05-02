@@ -63,22 +63,28 @@ class Controlador:
     def zoom(self, direcao: TIPO_ZOOM):
         if direcao == Controlador.TIPO_ZOOM.menos.value:
             self.__viewport.zoom_in()
+            self.__gui.output.insert('1.0', "Zoom In\n")
         else:
             self.__viewport.zoom_out()
+            self.__gui.output.insert('1.0', "Zoom out\n")
         self.__viewport.draw(self.display_file.objetos())
 
     def navegar(self, direcao: Literal['up', 'down', 'left', 'right']):
         self.__viewport.navigate(direcao)
         self.__viewport.draw(self.display_file.objetos())
 
-
     def tilt(self, direction: Literal['up', 'down', 'left', 'right']) -> None:
         self.__viewport.tilt(direction)
         self.__viewport.draw(self.display_file.objetos())
+        self.__gui.output.insert('1.0', "Tilt\n")
 
     def move(self, direction: Literal['forward', 'backward']) -> None:
         self.__viewport.navigate(direction)
         self.__viewport.draw(self.display_file.objetos())
+        if direction == 'forward':
+            self.__gui.output.insert('1.0', "Visão movida para frente\n")
+        else:
+            self.__gui.output.insert('1.0', "Visão movida para trás\n")
 
     # Translação entrega 2 
     def translate_object(self, objeto: Objetos, movement_vector: Coordenada3D) -> None:
