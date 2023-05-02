@@ -44,7 +44,7 @@ class Controlador:
         while True:
             self.__gui.update()
 
-    def create_object(self, name: str, cor: str, object_type: Literal['dot', 'line', 'wireframe', 'bezier', 'spline'], coordinates: List[Coordenada3D]):
+    def criar_objeto(self, name: str, cor: str, object_type: Literal['dot', 'line', 'wireframe', 'bezier', 'spline'], coordinates: List[Coordenada3D]):
         if object_type == 'dot':
             self.display_file.append(Ponto(name, cor, coordinates))
             self.__gui.output.insert('1.0', "Ponto criado\n")

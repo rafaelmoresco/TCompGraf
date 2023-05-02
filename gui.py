@@ -176,11 +176,12 @@ class Gui:
             tab_frame.pack(fill=BOTH, expand=True)
             self.__create_label(tab_frame, "Coordenadas:", pady=4, padx=10, anchor=NW)
             coords_inputs = []
-            if tab_name != 'Bezier' and tab_name != 'B Spline':
+            if tab_name == 'Bezier' and tab_name == 'B Spline':
                 coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 4)
             else:
                 for _ in range(i + 1):
-                    coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 2 if tab_name == 'Wireframe' else 1)
+                    coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 1)
+                    #coords_inputs = self.__add_coord_inputs(tab_frame, coords_inputs, 2 if tab_name == 'Wireframe' else 1)
             tabs_coords_inputs.append(coords_inputs)
 
             if tab_name == 'Wireframe' or tab_name == 'Bezier' or tab_name == 'B Spline':
